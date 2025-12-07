@@ -62,7 +62,7 @@ const index = () => {
   if (loading) {
     return <div>Loading..</div>;
   }
-  
+
   if (!videos) {
     return <div>Video not found</div>;
   }
@@ -73,7 +73,7 @@ const index = () => {
           <div className="lg:col-span-2 space-y-4">
             <Videopplayer video={videos} />
             <VideoInfo video={videos} />
-            <Comments videoId={id} />
+            {typeof id === "string" && <Comments videoId={id} />}
           </div>
           <div className="space-y-4">
             <RelatedVideos videos={video} />
