@@ -29,6 +29,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // hydrate from localStorage once so pages that access user immediately don't crash
   useEffect(() => {
     try {
+      if (typeof window === "undefined") return; // Skip if not in browser
       const raw = localStorage.getItem("user");
       if (raw) {
         const parsed = JSON.parse(raw);
@@ -55,7 +56,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     setUser(userdata);
     try {
-      localStorage.setItem("user", JSON.stringify(userdata));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(userdata));
+      }
     } catch (err) {
       console.warn("Failed to write user to localStorage", err);
     }
@@ -64,7 +67,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     setUser(null);
     try {
-      localStorage.removeItem("user");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
     } catch (err) {
       /* ignore */
     }
