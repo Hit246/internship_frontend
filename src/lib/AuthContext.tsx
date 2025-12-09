@@ -30,16 +30,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     try {
       if (typeof window === "undefined") return; // Skip if not in browser
-      const raw = localStorage.getItem("user");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // only restore if looks like a user object with some id-like field
-        if (parsed && (parsed._id || parsed.id || parsed.email)) {
-          setUser(parsed);
-        } else {
-          // stale/invalid store
-          localStorage.removeItem("user");
+      try {
+        const raw = localStorage.getItem("user");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          // only restore if looks like a user object with some id-like field
+          if (parsed && (parsed._id || parsed.id || parsed.email)) {
+            setUser(parsed);
+          } else {
+            // stale/invalid store
+            try {
+              localStorage.removeItem("user");
+            } catch (e) {
+              console.warn("Could not remove stale user from storage:", e);
+            }
+          }
         }
+      } catch (storageErr) {
+        console.warn("Could not access localStorage:", storageErr);
+        // continue anyway - user will be set when they login
       }
     } catch (err) {
       console.warn("Failed to read user from localStorage", err);
@@ -57,7 +66,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(userdata);
     try {
       if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(userdata));
+        try {
+          localStorage.setItem("user", JSON.stringify(userdata));
+        } catch (storageErr) {
+          console.warn("Could not write user to localStorage:", storageErr);
+          // continue anyway - user is still set in state
+        }
       }
     } catch (err) {
       console.warn("Failed to write user to localStorage", err);
@@ -68,7 +82,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     try {
       if (typeof window !== "undefined") {
-        localStorage.removeItem("user");
+        try {
+          localStorage.removeItem("user");
+        } catch (storageErr) {
+          console.warn("Could not remove from localStorage:", storageErr);
+        }
       }
     } catch (err) {
       /* ignore */
