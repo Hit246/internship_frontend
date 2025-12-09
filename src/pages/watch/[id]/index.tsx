@@ -72,7 +72,11 @@ const index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <Videopplayer video={videos} />
-            <VideoInfo video={videos} />
+            <VideoInfo
+              video={videos}
+              videoId={typeof id === "string" ? id : ""}
+              videoData={videos}
+            />
             {typeof id === "string" && <Comments videoId={id} />}
           </div>
           <div className="space-y-4">

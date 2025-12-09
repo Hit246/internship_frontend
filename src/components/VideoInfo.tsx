@@ -12,8 +12,9 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@/lib/AuthContext";
 import axiosInstance from "@/lib/axiosinstance";
+import DownloadButton from "./DownloadButton";
 
-const VideoInfo = ({ video }: any) => {
+const VideoInfo = ({ video, videoId, videoData }: any) => {
   const [likes, setlikes] = useState(video.Like || 0);
   const [dislikes, setDislikes] = useState(video.Dislike || 0);
   const [isLiked, setIsLiked] = useState(false);
@@ -111,6 +112,14 @@ const VideoInfo = ({ video }: any) => {
       console.log(error);
     }
   };
+  if (!video) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold">Loading...</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">{video.videotitle}</h1>
@@ -135,9 +144,8 @@ const VideoInfo = ({ video }: any) => {
               onClick={handleLike}
             >
               <ThumbsUp
-                className={`w-5 h-5 mr-2 ${
-                  isLiked ? "fill-black text-black" : ""
-                }`}
+                className={`w-5 h-5 mr-2 ${isLiked ? "fill-black text-black" : ""
+                  }`}
               />
               {likes.toLocaleString()}
             </Button>
@@ -149,9 +157,8 @@ const VideoInfo = ({ video }: any) => {
               onClick={handleDislike}
             >
               <ThumbsDown
-                className={`w-5 h-5 mr-2 ${
-                  isDisliked ? "fill-black text-black" : ""
-                }`}
+                className={`w-5 h-5 mr-2 ${isDisliked ? "fill-black text-black" : ""
+                  }`}
               />
               {dislikes.toLocaleString()}
             </Button>
@@ -159,9 +166,8 @@ const VideoInfo = ({ video }: any) => {
           <Button
             variant="ghost"
             size="sm"
-            className={`bg-gray-100 rounded-full ${
-              isWatchLater ? "text-primary" : ""
-            }`}
+            className={`bg-gray-100 rounded-full ${isWatchLater ? "text-primary" : ""
+              }`}
             onClick={handleWatchLater}
           >
             <Clock className="w-5 h-5 mr-2" />
@@ -175,14 +181,11 @@ const VideoInfo = ({ video }: any) => {
             <Share className="w-5 h-5 mr-2" />
             Share
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="bg-gray-100 rounded-full"
-          >
-            <Download className="w-5 h-5 mr-2" />
-            Download
-          </Button>
+          <DownloadButton
+            videoId={videoId}
+            videoTitle={videoData?.videotitle || "video"}
+            userId={user?._id}
+          />
           <Button
             variant="ghost"
             size="icon"

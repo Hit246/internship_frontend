@@ -12,7 +12,6 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ video }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const videos = "/video/vdo.mp4";
 
   return (
     <div className="aspect-video bg-black rounded-lg overflow-hidden">
@@ -20,7 +19,7 @@ export default function VideoPlayer({ video }: VideoPlayerProps) {
         ref={videoRef}
         className="w-full h-full"
         controls
-        poster={`/placeholder.svg?height=480&width=854`}
+        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='854' height='480'%3E%3Crect fill='%23222' width='854' height='480'/%3E%3C/svg%3E"
       >
         <source
           src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${video?.filepath}`}

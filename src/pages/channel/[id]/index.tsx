@@ -58,7 +58,7 @@ const index = () => {
           </div>
           <div className="px-4 pb-8">
             <ChannelVideos videos={videos} />
-          </div>
+          </div> 
         </div>
       </div>
     );
