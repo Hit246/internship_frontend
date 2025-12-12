@@ -27,11 +27,11 @@ function ThemedShell({ Component, pageProps }: AppProps) {
   );
 }
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps, router }: AppProps) {
   return (
     <EnvironmentProvider>
       <UserProvider>
-        <ThemedShell Component={Component} pageProps={pageProps} />
+        <ThemedShell Component={Component} pageProps={pageProps} router={router} />
       </UserProvider>
     </EnvironmentProvider>
   );
