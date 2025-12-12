@@ -3,8 +3,10 @@
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { useState, ReactNode, useEffect } from "react";
 import { createContext, useContext } from "react";
+import { toast } from "sonner";
 import { provider, auth } from "./firebase";
 import axiosInstance from "./axiosinstance";
+import { useEnvironment } from "./EnvironmentContext";
 
 interface UserContextType {
   user: any;
@@ -25,11 +27,12 @@ function pickUserFromResponse(resp: any) {
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
+  const { otpChannel, locationState, isSouthernState, isTimeWindow } = useEnvironment();
 
   // hydrate from localStorage once so pages that access user immediately don't crash
   useEffect(() => {
     try {
-      if (typeof window === "undefined") return; // Skip if not in browser
+      if (typeof window === "undefined") return;
       try {
         const raw = localStorage.getItem("user");
         if (raw) {
@@ -55,6 +58,36 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const dispatchOtp = async (userdata: any) => {
+    try {
+      await axiosInstance.post("/user/otp/dispatch", {
+        channel: otpChannel,
+        email: userdata?.email,
+        phone: userdata?.phone,
+        state: locationState,
+      });
+    } catch (error) {
+      console.warn("Could not dispatch OTP to backend:", error);
+    }
+  };
+
+  const notifyOtpChannel = (userdata: any) => {
+    const channelLabel = otpChannel === "email" ? "email" : "mobile";
+    const destination =
+      otpChannel === "email"
+        ? userdata?.email || "registered email"
+        : userdata?.phone || "registered mobile number";
+
+    const locationLabel = locationState ? `from ${locationState}` : "from your location";
+    const timeLabel = `during ${isTimeWindow ? "10 AM - 12 PM window" : "off-hours"}`;
+    toast.info(`OTP sent via ${channelLabel}`, {
+      description: `Dispatched to ${destination} ${locationLabel}; ${otpChannel === "email"
+        ? "southern region rule"
+        : "non-southern rule"
+        } applied ${timeLabel}.`,
+    });
+  };
+
   const login = (userdata: any) => {
     if (!userdata || typeof userdata !== "object") {
       console.warn("login() called with invalid userdata — ignoring:", userdata);
@@ -76,6 +109,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.warn("Failed to write user to localStorage", err);
     }
+    dispatchOtp(userdata);
+    notifyOtpChannel(userdata);
   };
 
   const logout = async () => {
