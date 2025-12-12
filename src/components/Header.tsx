@@ -14,9 +14,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Channeldialogue from "./channeldialogue";
 import { useRouter } from "next/router";
 import { useUser } from "@/lib/AuthContext";
+import { useEnvironment } from "@/lib/EnvironmentContext";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const { user, logout, handlegooglesignin } = useUser();
+  const { theme } = useEnvironment();
+  const isLight = theme === "light";
   // const user: any = {
   //   id: "1",
   //   name: "John Doe",
@@ -38,9 +42,14 @@ const Header = () => {
     }
   };
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-white border-b">
+    <header
+      className={cn(
+        "flex items-center justify-between px-4 py-2 border-b transition-colors",
+        isLight ? "bg-white text-gray-900 border-gray-200" : "bg-neutral-900 text-white border-neutral-800"
+      )}
+    >
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className={isLight ? "text-gray-900" : "text-white"}>
           <Menu className="w-6 h-6" />
         </Button>
         <Link href="/" className="flex items-center gap-1">
@@ -68,22 +77,29 @@ const Header = () => {
           />
           <Button
             type="submit"
-            className="rounded-r-full px-6 bg-gray-50 hover:bg-gray-100 text-gray-600 border border-l-0"
+            className={cn(
+              "rounded-r-full px-6 border border-l-0",
+              isLight ? "bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200" : "bg-neutral-800 hover:bg-neutral-700 text-white border-neutral-700"
+            )}
           >
             <Search className="w-5 h-5" />
           </Button>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn("rounded-full", isLight ? "text-gray-700" : "text-white")}
+        >
           <Mic className="w-5 h-5" />
         </Button>
       </form>
       <div className="flex items-center gap-2">
         {user ? (
           <>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className={isLight ? "text-gray-800" : "text-white"}>
               <VideoIcon className="w-6 h-6" />
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className={isLight ? "text-gray-800" : "text-white"}>
               <Bell className="w-6 h-6" />
             </Button>
             <DropdownMenu>

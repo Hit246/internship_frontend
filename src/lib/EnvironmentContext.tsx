@@ -71,10 +71,13 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
     // propagate class to html for global theming
     if (typeof document !== "undefined") {
       const root = document.documentElement;
+      const lightClass = "light-theme";
       if (theme === "dark") {
         root.classList.add("dark");
+        root.classList.remove(lightClass);
       } else {
         root.classList.remove("dark");
+        root.classList.add(lightClass);
       }
       root.dataset.theme = theme;
     }

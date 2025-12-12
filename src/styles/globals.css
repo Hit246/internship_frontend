@@ -129,7 +129,28 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Light theme helper to ensure legacy text-white/bg-neutral-* classes remain readable */
+.light-theme {
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+.light-theme body {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.light-theme .text-white {
+  color: #0f172a !important;
+}
+
+.light-theme .bg-neutral-900,
+.light-theme .bg-neutral-950 {
+  background-color: #f3f4f6 !important;
 }
