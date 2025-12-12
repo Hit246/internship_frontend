@@ -6,6 +6,7 @@ import {
   ThumbsUp,
   History,
   User,
+  PhoneCall,
   Download,
 } from "lucide-react";
 import Link from "next/link";
@@ -55,6 +56,15 @@ const Sidebar = () => {
           >
             <PlaySquare className="w-5 h-5 mr-3" />
             Subscriptions
+          </Button>
+        </Link>
+        <Link href="/call">
+          <Button
+            variant="ghost"
+            className={cn("w-full justify-start", isLight ? "text-gray-900" : "text-white")}
+          >
+            <PhoneCall className="w-5 h-5 mr-3" />
+            Calls
           </Button>
         </Link>
 
