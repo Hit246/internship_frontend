@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 
 interface VideoPlayerProps {
   video: {
@@ -86,7 +86,7 @@ export default function VideoPlayer({
     }
   };
 
-  const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleTap = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     const x = e.clientX - rect.left;
@@ -107,7 +107,7 @@ export default function VideoPlayer({
     <div
       ref={containerRef}
       className="relative aspect-video bg-black rounded-lg overflow-hidden select-none"
-      onClick={handleTap}
+      onPointerUp={handleTap}
     >
       <video
         ref={videoRef}

@@ -85,6 +85,11 @@ const PremiumCheckout: React.FC<PremiumCheckoutProps> = ({
             script.onload = () => {
                 handleRazorpayPayment(orderId, amount);
             };
+            script.onerror = () => {
+                const msg = "Razorpay script failed to load";
+                setError(msg);
+                toast.error(msg);
+            };
             document.body.appendChild(script);
         } catch (err: any) {
             const errorMsg = err.response?.data?.message || err.message || "Payment failed";

@@ -3,9 +3,8 @@ import RelatedVideos from "@/components/RelatedVideos";
 import VideoInfo from "@/components/VideoInfo";
 import Videopplayer from "@/components/Videopplayer";
 import axiosInstance from "@/lib/axiosinstance";
-import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 
 const index = () => {
   const router = useRouter();
@@ -13,6 +12,7 @@ const index = () => {
   const [videos, setvideo] = useState<any>(null);
   const [video, setvide] = useState<any>(null);
   const [loading, setloading] = useState(true);
+  const commentsRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const fetchvideo = async () => {
       if (!id || typeof id !== "string") return;
@@ -29,6 +29,27 @@ const index = () => {
     };
     fetchvideo();
   }, [id]);
+
+  const handleNextVideo = useCallback(() => {
+    if (!video || !id || typeof id !== "string") return;
+    const currentIndex = video.findIndex((v: any) => v._id === id);
+    if (currentIndex === -1) return;
+    const nextIndex = (currentIndex + 1) % video.length;
+    const nextVideo = video[nextIndex];
+    if (nextVideo?._id) {
+      router.push(`/watch/${nextVideo._id}`);
+    }
+  }, [video, id, router]);
+
+  const handleShowComments = useCallback(() => {
+    if (commentsRef.current) {
+      commentsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  const handleCloseApp = useCallback(() => {
+    // no-op placeholder: actual close handled in player
+  }, []);
   // const relatedVideos = [
   //   {
   //     _id: "1",
@@ -71,13 +92,22 @@ const index = () => {
       <div className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            <Videopplayer video={videos} />
+            <Videopplayer
+              video={videos}
+              onNextVideo={handleNextVideo}
+              onShowComments={handleShowComments}
+              onCloseApp={handleCloseApp}
+            />
             <VideoInfo
               video={videos}
               videoId={typeof id === "string" ? id : ""}
               videoData={videos}
             />
-            {typeof id === "string" && <Comments videoId={id} />}
+            {typeof id === "string" && (
+              <div id="comments-section" ref={commentsRef}>
+                <Comments videoId={id} />
+              </div>
+            )}
           </div>
           <div className="space-y-4">
             <RelatedVideos videos={video} />
